@@ -3,6 +3,38 @@ import { Mail, Phone, Clock, Send, CheckCircle, ShieldCheck, UserCheck, Star, Qu
 import { addInquiry, getTestimonials } from '../sanityClient';
 import emailjs from '@emailjs/browser';
 
+// Safe utility to get environment variables across Vite, Process, Window, and Vercel environments
+const getEnvVar = (key: string): string => {
+  // 1. Try import.meta.env
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+      return import.meta.env[key] as string;
+    }
+    const viteKey = `VITE_${key}`;
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[viteKey]) {
+      return import.meta.env[viteKey] as string;
+    }
+  } catch (e) {}
+
+  // 2. Try window and global variables
+  if (typeof window !== 'undefined') {
+    const win = window as any;
+    if (win[key]) return win[key] as string;
+    if (win.process?.env?.[key]) return win.process.env[key];
+    if (win.ENV?.[key]) return win.ENV[key];
+    if (win.__ENV__?.[key]) return win.__ENV__[key];
+  }
+
+  // 3. Try Node process env
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env[key]) {
+      return process.env[key] as string;
+    }
+  } catch (e) {}
+
+  return "";
+};
+
 // ==========================================================
 // EMAILJS CONFIGURATION PLACEHOLDERS & ENVIRONMENT VARIABLES
 // ==========================================================
@@ -11,23 +43,9 @@ import emailjs from '@emailjs/browser';
 // - NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
 // - NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 // ==========================================================
-const EMAILJS_SERVICE_ID_PLACEHOLDER = 
-  (import.meta.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID as string) || 
-  (import.meta.env.VITE_EMAILJS_SERVICE_ID as string) || 
-  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_EMAILJS_SERVICE_ID) || 
-  ""; 
-
-const EMAILJS_TEMPLATE_ID_PLACEHOLDER = 
-  (import.meta.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID as string) || 
-  (import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string) || 
-  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID) || 
-  "";
-
-const EMAILJS_PUBLIC_KEY_PLACEHOLDER = 
-  (import.meta.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY as string) || 
-  (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string) || 
-  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY) || 
-  "";
+const EMAILJS_SERVICE_ID_PLACEHOLDER = getEnvVar("NEXT_PUBLIC_EMAILJS_SERVICE_ID");
+const EMAILJS_TEMPLATE_ID_PLACEHOLDER = getEnvVar("NEXT_PUBLIC_EMAILJS_TEMPLATE_ID");
+const EMAILJS_PUBLIC_KEY_PLACEHOLDER = getEnvVar("NEXT_PUBLIC_EMAILJS_PUBLIC_KEY");
 
 interface ContactFormProps {
   preSelectedPlan?: string;
@@ -122,7 +140,10 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
     });
 
     // 2. Deliver via EmailJS to owner's Gmail if credentials are configured
-    const { serviceId, templateId, publicKey } = emailJsConfig;
+    const serviceId = emailJsConfig.serviceId || getEnvVar("NEXT_PUBLIC_EMAILJS_SERVICE_ID");
+    const templateId = emailJsConfig.templateId || getEnvVar("NEXT_PUBLIC_EMAILJS_TEMPLATE_ID");
+    const publicKey = emailJsConfig.publicKey || getEnvVar("NEXT_PUBLIC_EMAILJS_PUBLIC_KEY");
+
     if (serviceId && templateId && publicKey) {
       try {
         const templateParams = {
@@ -268,33 +289,26 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
                 </div>
 
                 {/* EmailJS Delivery Status banner */}
-                <div className="max-w-md mx-auto p-4 rounded text-left text-xs border border-gold-accent/15 bg-[#FDFBF7] space-y-1">
-                  {emailStatus === 'success' && (
-                    <div className="text-emerald-800 flex items-start gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-bold">EmailJS Sent Successfully:</span> Email notification dispatched to Academy Manager's Gmail inbox with full registration details!
+                {(emailStatus === 'success' || emailStatus === 'error') && (
+                  <div className="max-w-md mx-auto p-4 rounded text-left text-xs border border-gold-accent/15 bg-[#FDFBF7] space-y-1">
+                    {emailStatus === 'success' && (
+                      <div className="text-emerald-800 flex items-start gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold">EmailJS Sent Successfully:</span> Email notification dispatched to Academy Manager's Gmail inbox with full registration details!
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {emailStatus === 'skipped' && (
-                    <div className="text-amber-800 flex items-start gap-2">
-                      <div className="px-1.5 py-0.5 bg-amber-100 rounded text-amber-700 font-mono text-[9px] uppercase shrink-0 mt-0.5">DEV</div>
-                      <div>
-                        <span className="font-bold">Gmail Notification Queued:</span> EmailJS skipped because Service ID/Template ID are empty placeholders. 
-                        <p className="mt-1 text-[11px] text-warm-text/70">Configure them below in the collapsible <strong>EmailJS Settings</strong> panel to activate live Gmail routing.</p>
+                    )}
+                    {emailStatus === 'error' && (
+                      <div className="text-red-800 flex items-start gap-2">
+                        <span className="text-red-600 shrink-0 mt-0.5 font-bold">⚠️</span>
+                        <div>
+                          <span className="font-bold">EmailJS Failed:</span> The registration was saved, but we couldn't send the Gmail alert. Check your EmailJS service status or keys.
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {emailStatus === 'error' && (
-                    <div className="text-red-800 flex items-start gap-2">
-                      <span className="text-red-600 shrink-0 mt-0.5 font-bold">⚠️</span>
-                      <div>
-                        <span className="font-bold">EmailJS Failed:</span> The registration was saved, but we couldn't send the Gmail alert. Check your EmailJS service status or keys.
-                      </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="pt-4">
                   <button
