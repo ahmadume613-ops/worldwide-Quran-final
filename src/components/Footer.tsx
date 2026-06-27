@@ -12,7 +12,7 @@ interface FooterProps {
 export default function Footer({ onGoToStudio }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
-  const contactEmail = "ahmadume613@gmail.com";
+  const contactEmail = "worldwidequrann@gmail.com";
   const contactPhone = "+923345750157";
   const whatsappUrl = "https://wa.me/923345750157";
 
