@@ -1,0 +1,6 @@
+{
+  "name": "Worldwide Quran Academy Web",
+  "description": "A professional and modern online Quran academy for kids and adults, offering 1-on-1 and group classes led by expert male and female teachers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

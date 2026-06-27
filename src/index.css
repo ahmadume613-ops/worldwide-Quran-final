@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Libre Baskerville", Georgia, serif;
+  
+  --color-warm-bg: #FDFBF7;
+  --color-warm-text: #2D312A;
+  --color-gold-accent: #A4864A;
+  --color-emerald-deep: #1E3A2B;
+  --color-warm-border: #E5E1DA;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-warm-bg);
+  color: var(--color-warm-text);
+}
+
+h1, h2, h3, .serif-font {
+  font-family: var(--font-serif);
+}
