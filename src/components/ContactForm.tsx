@@ -4,19 +4,30 @@ import { addInquiry, getTestimonials } from '../sanityClient';
 import emailjs from '@emailjs/browser';
 
 // ==========================================================
-// EMAILJS CONFIGURATION PLACEHOLDERS
+// EMAILJS CONFIGURATION PLACEHOLDERS & ENVIRONMENT VARIABLES
 // ==========================================================
-// Replace these empty strings with your actual EmailJS credentials:
-// 1. Service ID (e.g. 'service_xxxxxx')
-// 2. Template ID (e.g. 'template_xxxxxx')
-// 3. Public Key (e.g. 'your_public_key_here')
-//
-// Note: You can also enter them directly in the "EmailJS Settings"
-// interactive panel at the bottom of the form on the live website.
+// Reads from the environment variables configured in the dashboard:
+// - NEXT_PUBLIC_EMAILJS_SERVICE_ID
+// - NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+// - NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 // ==========================================================
-const EMAILJS_SERVICE_ID_PLACEHOLDER = ""; 
-const EMAILJS_TEMPLATE_ID_PLACEHOLDER = "";
-const EMAILJS_PUBLIC_KEY_PLACEHOLDER = "";
+const EMAILJS_SERVICE_ID_PLACEHOLDER = 
+  (import.meta.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID as string) || 
+  (import.meta.env.VITE_EMAILJS_SERVICE_ID as string) || 
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_EMAILJS_SERVICE_ID) || 
+  ""; 
+
+const EMAILJS_TEMPLATE_ID_PLACEHOLDER = 
+  (import.meta.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID as string) || 
+  (import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string) || 
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID) || 
+  "";
+
+const EMAILJS_PUBLIC_KEY_PLACEHOLDER = 
+  (import.meta.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY as string) || 
+  (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string) || 
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY) || 
+  "";
 
 interface ContactFormProps {
   preSelectedPlan?: string;
