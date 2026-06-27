@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, Clock, Send, CheckCircle, ShieldCheck, UserCheck, Star, Quote } from 'lucide-react';
 import { addInquiry, getTestimonials } from '../sanityClient';
+import emailjs from '@emailjs/browser';
+
+// ==========================================================
+// EMAILJS CONFIGURATION PLACEHOLDERS
+// ==========================================================
+// Replace these empty strings with your actual EmailJS credentials:
+// 1. Service ID (e.g. 'service_xxxxxx')
+// 2. Template ID (e.g. 'template_xxxxxx')
+// 3. Public Key (e.g. 'your_public_key_here')
+//
+// Note: You can also enter them directly in the "EmailJS Settings"
+// interactive panel at the bottom of the form on the live website.
+// ==========================================================
+const EMAILJS_SERVICE_ID_PLACEHOLDER = ""; 
+const EMAILJS_TEMPLATE_ID_PLACEHOLDER = "";
+const EMAILJS_PUBLIC_KEY_PLACEHOLDER = "";
 
 interface ContactFormProps {
   preSelectedPlan?: string;
@@ -24,6 +40,15 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [testimonials, setTestimonials] = useState<any[]>([]);
+
+  // EmailJS dynamic state configuration
+  const [emailJsConfig, setEmailJsConfig] = useState({
+    serviceId: localStorage.getItem('emailjs_service_id') || EMAILJS_SERVICE_ID_PLACEHOLDER,
+    templateId: localStorage.getItem('emailjs_template_id') || EMAILJS_TEMPLATE_ID_PLACEHOLDER,
+    publicKey: localStorage.getItem('emailjs_public_key') || EMAILJS_PUBLIC_KEY_PLACEHOLDER,
+  });
+  const [showDeveloperPanel, setShowDeveloperPanel] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'success' | 'skipped' | 'error'>('idle');
 
   // Load testimonials on mount
   useEffect(() => {
@@ -60,7 +85,7 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
     }
   }, [preSelectedPlan]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.studentName || !formData.phone || !formData.email || !formData.preferredFormat || !formData.preferredDays) {
       setValidationError("Please fill in all mandatory fields (Name, Phone, Email, Preferred Format, and Preferred Days).");
@@ -69,24 +94,52 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
 
     setValidationError('');
     setIsSubmitting(true);
-    setTimeout(() => {
-      // Add to our emulated Sanity/local state
-      addInquiry({
-        studentName: formData.studentName,
-        parentName: formData.parentName || undefined,
-        phone: formData.phone,
-        email: formData.email,
-        ageGroup: formData.ageGroup,
-        courseInterest: formData.courseInterest,
-        preferredFormat: formData.preferredFormat,
-        preferredDays: formData.preferredDays,
-        preferredTime: formData.preferredTime,
-        message: formData.message
-      });
+    setEmailStatus('idle');
 
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 800);
+    // 1. Save to our emulated Sanity/local state
+    addInquiry({
+      studentName: formData.studentName,
+      parentName: formData.parentName || undefined,
+      phone: formData.phone,
+      email: formData.email,
+      ageGroup: formData.ageGroup,
+      courseInterest: formData.courseInterest,
+      preferredFormat: formData.preferredFormat,
+      preferredDays: formData.preferredDays,
+      preferredTime: formData.preferredTime,
+      message: formData.message
+    });
+
+    // 2. Deliver via EmailJS to owner's Gmail if credentials are configured
+    const { serviceId, templateId, publicKey } = emailJsConfig;
+    if (serviceId && templateId && publicKey) {
+      try {
+        const templateParams = {
+          student_name: formData.studentName,
+          parent_name: formData.parentName || 'N/A',
+          whatsapp_number: formData.phone,
+          student_email: formData.email,
+          age_group: formData.ageGroup,
+          selected_course: formData.courseInterest,
+          preferred_format: formData.preferredFormat,
+          preferred_days: formData.preferredDays,
+          preferred_time: formData.preferredTime,
+          message: formData.message || 'No additional message.'
+        };
+
+        await emailjs.send(serviceId, templateId, templateParams, publicKey);
+        setEmailStatus('success');
+      } catch (err: any) {
+        console.error('EmailJS Delivery Failed:', err);
+        setEmailStatus('error');
+      }
+    } else {
+      console.log('EmailJS skipped (credentials empty/not configured). Configured in placeholders or interactive Developer panel.');
+      setEmailStatus('skipped');
+    }
+
+    setIsSubmitting(false);
+    setIsSubmitted(true);
   };
 
   const handleReset = () => {
@@ -104,6 +157,7 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
     });
     setValidationError('');
     setIsSubmitted(false);
+    setEmailStatus('idle');
   };
 
   const contactEmail = "ahmadume613@gmail.com";
@@ -191,23 +245,53 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
           {/* Contact Right: Form Layout */}
           <div className="lg:col-span-7 bg-[#FDFBF7] border border-[#E5E1DA] rounded p-8 sm:p-10 flex flex-col justify-center shadow-sm">
             {isSubmitted ? (
-              <div className="text-center py-8 space-y-6">
-                <div className="w-16 h-16 bg-[#F5F2ED] rounded-full flex items-center justify-center mx-auto text-emerald-deep border border-gold-accent/20 shadow-inner">
+              <div className="text-center py-8 space-y-6 animate-fade-in">
+                <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-deep border border-gold-accent/20 shadow-inner">
                   <CheckCircle className="w-10 h-10 text-gold-accent" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-extrabold text-[#2D312A] serif-font">Application Submitted!</h3>
+                  <h3 className="text-2xl font-extrabold text-[#2D312A] serif-font">Thank you! Your registration has been received.</h3>
                   <p className="text-warm-text/80 text-sm max-w-md mx-auto leading-relaxed font-light">
-                    Thank you, <strong className="text-[#2D312A] font-semibold">{formData.studentName}</strong>! Your Quran free trial registration is saved. You can view your record instantly in our <strong>Sanity Studio</strong>! Our coordinator will contact you shortly.
+                    Dear <strong className="text-[#2D312A] font-semibold">{formData.studentName}</strong>, your Quran free trial registration is saved. You can view your record instantly in our <strong>Sanity Studio</strong>! Our coordinator will contact you shortly on WhatsApp.
                   </p>
                 </div>
+
+                {/* EmailJS Delivery Status banner */}
+                <div className="max-w-md mx-auto p-4 rounded text-left text-xs border border-gold-accent/15 bg-[#FDFBF7] space-y-1">
+                  {emailStatus === 'success' && (
+                    <div className="text-emerald-800 flex items-start gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold">EmailJS Sent Successfully:</span> Email notification dispatched to Academy Manager's Gmail inbox with full registration details!
+                      </div>
+                    </div>
+                  )}
+                  {emailStatus === 'skipped' && (
+                    <div className="text-amber-800 flex items-start gap-2">
+                      <div className="px-1.5 py-0.5 bg-amber-100 rounded text-amber-700 font-mono text-[9px] uppercase shrink-0 mt-0.5">DEV</div>
+                      <div>
+                        <span className="font-bold">Gmail Notification Queued:</span> EmailJS skipped because Service ID/Template ID are empty placeholders. 
+                        <p className="mt-1 text-[11px] text-warm-text/70">Configure them below in the collapsible <strong>EmailJS Settings</strong> panel to activate live Gmail routing.</p>
+                      </div>
+                    </div>
+                  )}
+                  {emailStatus === 'error' && (
+                    <div className="text-red-800 flex items-start gap-2">
+                      <span className="text-red-600 shrink-0 mt-0.5 font-bold">⚠️</span>
+                      <div>
+                        <span className="font-bold">EmailJS Failed:</span> The registration was saved, but we couldn't send the Gmail alert. Check your EmailJS service status or keys.
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="pt-4">
                   <button
                     id="reset-form-btn"
                     onClick={handleReset}
                     className="inline-flex items-center gap-1.5 bg-[#F5F2ED] hover:bg-[#E5E1DA] text-[#2D312A] font-semibold px-6 py-2.5 rounded text-xs uppercase tracking-wide transition cursor-pointer"
                   >
-                    <span>Submit Another Inquiry</span>
+                    <span>Submit Another Registration</span>
                   </button>
                 </div>
               </div>
@@ -380,6 +464,87 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
                 </div>
               </form>
             )}
+
+            {/* Collapsible EmailJS settings panel for owner configuration */}
+            <div className="mt-8 pt-6 border-t border-[#E5E1DA]">
+              <button
+                type="button"
+                onClick={() => setShowDeveloperPanel(!showDeveloperPanel)}
+                className="w-full flex items-center justify-between text-xs text-warm-text/60 hover:text-[#2D312A] transition cursor-pointer"
+              >
+                <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px]">
+                  ⚙️ EmailJS Gmail Settings
+                </span>
+                <span className="text-[10px] bg-[#F5F2ED] border border-[#E5E1DA] px-2 py-0.5 rounded text-warm-text/80 font-mono">
+                  {showDeveloperPanel ? 'Collapse Setup' : 'Expand Setup'}
+                </span>
+              </button>
+
+              {showDeveloperPanel && (
+                <div className="mt-4 p-4 rounded bg-[#F5F2ED] border border-[#E5E1DA] space-y-4 animate-fade-in">
+                  <div className="text-[11px] text-warm-text/70 leading-relaxed space-y-1">
+                    <p className="font-semibold text-[#2D312A]">How to activate Gmail Notifications:</p>
+                    <ol className="list-decimal list-inside space-y-1 font-light">
+                      <li>Create a free account at <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" className="text-emerald-deep font-bold underline">emailjs.com</a></li>
+                      <li>Link your <strong>Gmail</strong> service to obtain your <strong>Service ID</strong></li>
+                      <li>Create an Email Template to obtain your <strong>Template ID</strong> (map parameters like <code className="bg-white/80 px-1 py-0.2 rounded font-mono text-[9px] font-bold">{"{{student_name}}"}</code>, <code className="bg-white/80 px-1 py-0.2 rounded font-mono text-[9px] font-bold">{"{{whatsapp_number}}"}</code>, <code className="bg-white/80 px-1 py-0.2 rounded font-mono text-[9px] font-bold">{"{{selected_course}}"}</code>)</li>
+                      <li>Retrieve your <strong>Public Key</strong> from the Account panel</li>
+                    </ol>
+                  </div>
+
+                  <div className="space-y-3 pt-1">
+                    <div>
+                      <label className="block text-[10px] font-bold text-warm-text/70 uppercase mb-1">EmailJS Service ID</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. service_gmail"
+                        value={emailJsConfig.serviceId}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEmailJsConfig(p => ({ ...p, serviceId: val }));
+                          localStorage.setItem('emailjs_service_id', val);
+                        }}
+                        className="w-full bg-white text-warm-text text-xs px-2.5 py-2 rounded border border-[#E5E1DA] focus:outline-none focus:border-gold-accent font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-warm-text/70 uppercase mb-1">EmailJS Template ID</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. template_quran_academy"
+                        value={emailJsConfig.templateId}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEmailJsConfig(p => ({ ...p, templateId: val }));
+                          localStorage.setItem('emailjs_template_id', val);
+                        }}
+                        className="w-full bg-white text-warm-text text-xs px-2.5 py-2 rounded border border-[#E5E1DA] focus:outline-none focus:border-gold-accent font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-warm-text/70 uppercase mb-1">EmailJS Public Key</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. user_abcdef123456"
+                        value={emailJsConfig.publicKey}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEmailJsConfig(p => ({ ...p, publicKey: val }));
+                          localStorage.setItem('emailjs_public_key', val);
+                        }}
+                        className="w-full bg-white text-warm-text text-xs px-2.5 py-2 rounded border border-[#E5E1DA] focus:outline-none focus:border-gold-accent font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <p className="text-[10px] text-warm-text/50 italic text-center font-light pt-1">
+                    Your dynamic values are stored and persist in your local browser cache.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
         </div>
