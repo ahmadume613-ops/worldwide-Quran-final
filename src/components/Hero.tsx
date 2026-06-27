@@ -1,5 +1,9 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Award } from 'lucide-react';
+import heroImg from '../assets/images/quran_academy_hero_1782168948648.jpg';
+
+// High-quality public stock image representing happy, warm interactive online learning with laptop as a robust fallback
+const FALLBACK_HERO = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80";
 
 export default function Hero() {
   return (
@@ -85,10 +89,13 @@ export default function Hero() {
             <div className="bg-[#FDFBF7] p-4 rounded border border-[#E5E1DA] relative shadow-lg">
               
               <img 
-                src="/src/assets/images/quran_academy_hero_1782168948648.jpg" 
+                src={heroImg} 
                 alt="Parents and children studying Quran together online in a warm home" 
                 className="w-full h-auto rounded object-cover aspect-[4/3] shadow-inner"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_HERO;
+                }}
               />
 
               {/* Float Badge 1: Expert Manager */}

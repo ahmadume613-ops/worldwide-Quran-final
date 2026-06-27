@@ -1,5 +1,9 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Heart, Database, CheckCircle, ShieldCheck } from 'lucide-react';
+import logoImg from '../assets/images/quran_academy_logo_1782168948648.jpg';
+
+// Elegant circular SVG emblem with emerald-deep background and gold border/lettering as a premium fallback
+const FALLBACK_LOGO = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230D3E26' stroke='%23C5A880' stroke-width='4'/><text x='50%' y='58%' font-family='serif, system-ui' font-size='42' font-weight='bold' fill='%23C5A880' text-anchor='middle'>Q</text></svg>";
 
 interface FooterProps {
   onGoToStudio: () => void;
@@ -22,10 +26,13 @@ export default function Footer({ onGoToStudio }: FooterProps) {
         <div className="md:col-span-4 space-y-6">
           <div className="flex items-center gap-3">
             <img 
-              src="/src/assets/images/quran_academy_logo_1782168948648.jpg" 
+              src={logoImg} 
               alt="Worldwide Quran Logo" 
               className="h-14 w-14 rounded-full object-cover border-2 border-gold-accent shadow-sm"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.currentTarget.src = FALLBACK_LOGO;
+              }}
             />
             <div>
               <span className="text-xl font-bold text-[#FDFBF7] block serif-font">WORLDWIDE QURAN</span>
