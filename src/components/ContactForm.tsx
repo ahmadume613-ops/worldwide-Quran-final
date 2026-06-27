@@ -70,13 +70,6 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
   const [validationError, setValidationError] = useState('');
   const [testimonials, setTestimonials] = useState<any[]>([]);
 
-  // EmailJS dynamic state configuration
-  const [emailJsConfig, setEmailJsConfig] = useState({
-    serviceId: localStorage.getItem('emailjs_service_id') || EMAILJS_SERVICE_ID_PLACEHOLDER,
-    templateId: localStorage.getItem('emailjs_template_id') || EMAILJS_TEMPLATE_ID_PLACEHOLDER,
-    publicKey: localStorage.getItem('emailjs_public_key') || EMAILJS_PUBLIC_KEY_PLACEHOLDER,
-  });
-  const [showDeveloperPanel, setShowDeveloperPanel] = useState(false);
   const [emailStatus, setEmailStatus] = useState<'idle' | 'success' | 'skipped' | 'error'>('idle');
 
   // Load testimonials on mount
@@ -140,9 +133,9 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
     });
 
     // 2. Deliver via EmailJS to owner's Gmail if credentials are configured
-    const serviceId = emailJsConfig.serviceId || getEnvVar("NEXT_PUBLIC_EMAILJS_SERVICE_ID");
-    const templateId = emailJsConfig.templateId || getEnvVar("NEXT_PUBLIC_EMAILJS_TEMPLATE_ID");
-    const publicKey = emailJsConfig.publicKey || getEnvVar("NEXT_PUBLIC_EMAILJS_PUBLIC_KEY");
+    const serviceId = getEnvVar("NEXT_PUBLIC_EMAILJS_SERVICE_ID");
+    const templateId = getEnvVar("NEXT_PUBLIC_EMAILJS_TEMPLATE_ID");
+    const publicKey = getEnvVar("NEXT_PUBLIC_EMAILJS_PUBLIC_KEY");
 
     if (serviceId && templateId && publicKey) {
       try {
@@ -490,86 +483,6 @@ export default function ContactForm({ preSelectedPlan }: ContactFormProps) {
               </form>
             )}
 
-            {/* Collapsible EmailJS settings panel for owner configuration */}
-            <div className="mt-8 pt-6 border-t border-[#E5E1DA]">
-              <button
-                type="button"
-                onClick={() => setShowDeveloperPanel(!showDeveloperPanel)}
-                className="w-full flex items-center justify-between text-xs text-warm-text/60 hover:text-[#2D312A] transition cursor-pointer"
-              >
-                <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px]">
-                  ⚙️ EmailJS Gmail Settings
-                </span>
-                <span className="text-[10px] bg-[#F5F2ED] border border-[#E5E1DA] px-2 py-0.5 rounded text-warm-text/80 font-mono">
-                  {showDeveloperPanel ? 'Collapse Setup' : 'Expand Setup'}
-                </span>
-              </button>
-
-              {showDeveloperPanel && (
-                <div className="mt-4 p-4 rounded bg-[#F5F2ED] border border-[#E5E1DA] space-y-4 animate-fade-in">
-                  <div className="text-[11px] text-warm-text/70 leading-relaxed space-y-1">
-                    <p className="font-semibold text-[#2D312A]">How to activate Gmail Notifications:</p>
-                    <ol className="list-decimal list-inside space-y-1 font-light">
-                      <li>Create a free account at <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" className="text-emerald-deep font-bold underline">emailjs.com</a></li>
-                      <li>Link your <strong>Gmail</strong> service to obtain your <strong>Service ID</strong></li>
-                      <li>Create an Email Template to obtain your <strong>Template ID</strong> (map parameters like <code className="bg-white/80 px-1 py-0.2 rounded font-mono text-[9px] font-bold">{"{{student_name}}"}</code>, <code className="bg-white/80 px-1 py-0.2 rounded font-mono text-[9px] font-bold">{"{{whatsapp_number}}"}</code>, <code className="bg-white/80 px-1 py-0.2 rounded font-mono text-[9px] font-bold">{"{{selected_course}}"}</code>)</li>
-                      <li>Retrieve your <strong>Public Key</strong> from the Account panel</li>
-                    </ol>
-                  </div>
-
-                  <div className="space-y-3 pt-1">
-                    <div>
-                      <label className="block text-[10px] font-bold text-warm-text/70 uppercase mb-1">EmailJS Service ID</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. service_gmail"
-                        value={emailJsConfig.serviceId}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setEmailJsConfig(p => ({ ...p, serviceId: val }));
-                          localStorage.setItem('emailjs_service_id', val);
-                        }}
-                        className="w-full bg-white text-warm-text text-xs px-2.5 py-2 rounded border border-[#E5E1DA] focus:outline-none focus:border-gold-accent font-mono"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-warm-text/70 uppercase mb-1">EmailJS Template ID</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. template_quran_academy"
-                        value={emailJsConfig.templateId}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setEmailJsConfig(p => ({ ...p, templateId: val }));
-                          localStorage.setItem('emailjs_template_id', val);
-                        }}
-                        className="w-full bg-white text-warm-text text-xs px-2.5 py-2 rounded border border-[#E5E1DA] focus:outline-none focus:border-gold-accent font-mono"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-warm-text/70 uppercase mb-1">EmailJS Public Key</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. user_abcdef123456"
-                        value={emailJsConfig.publicKey}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setEmailJsConfig(p => ({ ...p, publicKey: val }));
-                          localStorage.setItem('emailjs_public_key', val);
-                        }}
-                        className="w-full bg-white text-warm-text text-xs px-2.5 py-2 rounded border border-[#E5E1DA] focus:outline-none focus:border-gold-accent font-mono"
-                      />
-                    </div>
-                  </div>
-
-                  <p className="text-[10px] text-warm-text/50 italic text-center font-light pt-1">
-                    Your dynamic values are stored and persist in your local browser cache.
-                  </p>
-                </div>
-              )}
-            </div>
           </div>
 
         </div>
