@@ -74,8 +74,8 @@ export const INITIAL_PRICING_PLANS: PricingPlan[] = [
   {
     id: 'plan-5days',
     name: '5 Days a Week Plan',
-    priceUSD: '$60',
-    pricePKR: '$50',
+    priceUSD: '$50',
+    pricePKR: '$30',
     billing: 'monthly',
     features: [
       '5 Classes per week (20/month)',
@@ -91,7 +91,7 @@ export const INITIAL_PRICING_PLANS: PricingPlan[] = [
     id: 'plan-3or4days',
     name: '3 or 4 Days a Week Plan',
     priceUSD: '$40',
-    pricePKR: '$30',
+    pricePKR: '$22',
     billing: 'monthly',
     features: [
       '3 or 4 Classes per week (12-16/month)',
@@ -108,7 +108,7 @@ export const INITIAL_PRICING_PLANS: PricingPlan[] = [
     id: 'plan-2days',
     name: '2 Days a Week Plan',
     priceUSD: '$30',
-    pricePKR: '$25',
+    pricePKR: '$18',
     billing: 'monthly',
     features: [
       '2 Classes per week (8/month)',
@@ -124,7 +124,7 @@ export const INITIAL_PRICING_PLANS: PricingPlan[] = [
     id: 'plan-weekend',
     name: 'Weekend Special Plan',
     priceUSD: '$35',
-    pricePKR: '$29',
+    pricePKR: '$20',
     billing: 'monthly',
     features: [
       'Saturday & Sunday Classes (8/month)',
@@ -132,6 +132,74 @@ export const INITIAL_PRICING_PLANS: PricingPlan[] = [
       'Designed for tight weekday schedules',
       'Focus on Tajweed Quran and Islamic Duas',
       'Continuous friendly teacher guidance'
+    ],
+    isPopular: false,
+    audience: 'international'
+  },
+  {
+    id: 'plan-group-4or5days',
+    name: '4 or 5 Days Group Plan',
+    priceUSD: '$24',
+    pricePKR: '$15',
+    billing: 'monthly',
+    features: [
+      '4 or 5 Classes per week (16-20/month)',
+      'Small interactive cohorts (max 3-4 kids/adults)',
+      'High motivation & collaborative learning environment',
+      'Male or Female certified group tutor',
+      'Rapid syllabus progression together',
+      'Great budget choice for families'
+    ],
+    isPopular: true,
+    audience: 'international'
+  },
+  {
+    id: 'plan-group-3days',
+    name: '3 Days Group Plan',
+    priceUSD: '$18',
+    pricePKR: '$11',
+    billing: 'monthly',
+    features: [
+      '3 Classes per week (12/month)',
+      'Interactive small peer group environment',
+      'Tajweed Quran pronunciation exercises',
+      'Male or Female certified group tutor',
+      'Monthly performance checks',
+      'Engaging learning activities'
+    ],
+    isPopular: false,
+    audience: 'international'
+  },
+  {
+    id: 'plan-group-2days',
+    name: '2 Days Group Plan',
+    priceUSD: '$12',
+    pricePKR: '$8',
+    billing: 'monthly',
+    features: [
+      '2 Classes per week (8/month)',
+      'Highly economical global pricing rate',
+      'Perfect for group revision & entry basics',
+      'Male or Female certified group tutor',
+      'Fundamental Qaida learning circles',
+      'Patient & supportive environment'
+    ],
+    isPopular: false,
+    audience: 'international'
+  },
+  {
+    id: 'plan-group-weekend',
+    name: 'Weekend Special Group Plan',
+    priceUSD: '$14',
+    pricePKR: '$9',
+    billing: 'monthly',
+    features: [
+      'Saturday & Sunday Group Classes (8/month)',
+      'Weekend learning circles & quizzes',
+      'Duas, Namaz, and Islamic studies focus',
+      'Male or Female certified group tutor',
+      'Friendly weekend learning routine',
+      'Shared group review and practice'
     ],
     isPopular: false,
     audience: 'international'
@@ -159,11 +227,19 @@ export function getPricingPlans(): PricingPlan[] {
   const cached = localStorage.getItem('worldwide_quran_pricing');
   if (cached) {
     try {
-      return JSON.parse(cached);
+      const parsed = JSON.parse(cached);
+      // If the cached version doesn't have group plans or the group price is outdated, reset
+      const hasGroupPlans = parsed.some((p: any) => p.id.includes('group'));
+      const hasCorrectGroupPrice = parsed.some((p: any) => p.id === 'plan-group-4or5days' && p.priceUSD === '$24');
+      if (hasGroupPlans && hasCorrectGroupPrice) {
+        return parsed;
+      }
     } catch (e) {
       console.error(e);
     }
   }
+  // Initialize/reset with initial pricing plans
+  localStorage.setItem('worldwide_quran_pricing', JSON.stringify(INITIAL_PRICING_PLANS));
   return INITIAL_PRICING_PLANS;
 }
 

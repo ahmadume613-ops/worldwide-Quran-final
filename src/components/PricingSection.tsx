@@ -89,8 +89,8 @@ const GROUP_PLANS: PlanTemplate[] = [
   {
     id: 'group-4or5days',
     name: '4 or 5 Days Group Plan',
-    usdPrice: 45,
-    gbpPrice: 25,
+    usdPrice: 24,
+    gbpPrice: 15,
     features: [
       '4 or 5 Classes per week (16-20/month)',
       'Small interactive cohorts (max 3-4 kids/adults)',
@@ -104,8 +104,8 @@ const GROUP_PLANS: PlanTemplate[] = [
   {
     id: 'group-3days',
     name: '3 Days Group Plan',
-    usdPrice: 30,
-    gbpPrice: 18,
+    usdPrice: 18,
+    gbpPrice: 11,
     features: [
       '3 Classes per week (12/month)',
       'Interactive small peer group environment',
@@ -118,8 +118,8 @@ const GROUP_PLANS: PlanTemplate[] = [
   {
     id: 'group-2days',
     name: '2 Days Group Plan',
-    usdPrice: 20,
-    gbpPrice: 12,
+    usdPrice: 12,
+    gbpPrice: 8,
     features: [
       '2 Classes per week (8/month)',
       'Highly economical global pricing rate',
@@ -132,8 +132,8 @@ const GROUP_PLANS: PlanTemplate[] = [
   {
     id: 'group-weekend',
     name: 'Weekend Special Group Plan',
-    usdPrice: 25,
-    gbpPrice: 15,
+    usdPrice: 14,
+    gbpPrice: 9,
     features: [
       'Saturday & Sunday Group Classes (8/month)',
       'Weekend learning circles & quizzes',
