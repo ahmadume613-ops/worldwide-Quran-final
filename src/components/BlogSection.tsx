@@ -1,57 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, User, ArrowRight, BookOpen, Clock, Heart } from 'lucide-react';
-
-interface BlogPost {
-  id: string;
-  title: string;
-  category: string;
-  date: string;
-  author: string;
-  readTime: string;
-  excerpt: string;
-  content: string;
-  likes: number;
-}
-
-const BLOG_POSTS: BlogPost[] = [
-  {
-    id: 'post-1',
-    title: 'How 1-on-1 Online Lessons Keep Kids Motivated and Engaged',
-    category: 'E-Learning Tips',
-    date: 'June 24, 2026',
-    author: 'Academy Management',
-    readTime: '4 min read',
-    excerpt: 'Discover why interactive digital boards, personalized milestones, and supportive professional tutors outclass crowded general study environments for children under 12.',
-    content: 'Studying online can sometimes feel distant, but the modern 1-on-1 private lesson turns it into an immersive, highly motivating experience. By pairing each kid with a dedicated male or lady tutor, our classes focus entirely on the child\'s current pace. Interactive slides, pronunciation games for Madani Qaidah, and small reward metrics keep kids excited for their weekly classes, achieving continuous progress without any household stress.',
-    likes: 42
-  },
-  {
-    id: 'post-2',
-    title: 'The Importance of Tajweed: Protecting Quranic Meanings',
-    category: 'Tajweed Rules',
-    date: 'May 18, 2026',
-    author: 'Senior Tajweed Tutor',
-    readTime: '5 min read',
-    excerpt: 'Arabic is a deeply phonetic language where a minor error in articulation can completely transform a word\'s sacred meaning. Learn simple daily exercises for non-Arab speakers.',
-    content: 'Tajweed is not merely an optional decorative accent—it is the correct science of reciting the Holy Quran as it was originally revealed. Simple letters like \'Haa\' (ح) and \'Khaa\' (خ) require precise vocal cord placement. For international students, especially children, our tutors break down the Norani Qaidah letter-by-letter with visual guides, ensuring correct pronunciation is locked in from day one.',
-    likes: 58
-  },
-  {
-    id: 'post-3',
-    title: 'Setting Up a distraction-free Home Learning Zone',
-    category: 'Parent Guidance',
-    date: 'April 09, 2026',
-    author: 'Academy Manager',
-    readTime: '3 min read',
-    excerpt: 'Practical ideas for busy parents to establish an ideal, quiet space for children to lock in their focus during their 30-minute online sessions.',
-    content: 'A successful online lesson requires more than just high-speed internet. Having a dedicated desk, high-quality headphones, and a quiet environment makes an immense difference in student retention. We advise parents to schedule classes at a consistent time when household noise is minimal, enabling the student and the tutor to build a deep, distraction-free educational connection.',
-    likes: 31
-  }
-];
+import { getBlogPosts } from '../sanityClient';
+import { BlogPost } from '../types';
 
 export default function BlogSection() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
+
+  useEffect(() => {
+    setBlogPosts(getBlogPosts());
+  }, []);
 
   const handleLike = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -126,7 +85,7 @@ export default function BlogSection() {
 
         {/* Grid of posts */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {BLOG_POSTS.map((post) => {
+          {blogPosts.map((post) => {
             const isLiked = likedPosts.includes(post.id);
             return (
               <div 

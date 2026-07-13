@@ -17,8 +17,8 @@ import {
   Eye,
   Star
 } from 'lucide-react';
-import { getCourses, saveCourses, getPricingPlans, savePricingPlans, getInquiries, saveInquiries, getTestimonials, saveTestimonials, SANITY_CONFIG } from '../sanityClient';
-import { Course, PricingPlan, Inquiry, Testimonial } from '../types';
+import { getCourses, saveCourses, getPricingPlans, savePricingPlans, getInquiries, saveInquiries, getTestimonials, saveTestimonials, getBlogPosts, saveBlogPosts, SANITY_CONFIG } from '../sanityClient';
+import { Course, PricingPlan, Inquiry, Testimonial, BlogPost } from '../types';
 
 interface SanityStudioProps {
   onBackToWebsite: () => void;
@@ -32,9 +32,10 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
   const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
   // Studio Selection State
-  const [selectedSchema, setSelectedSchema] = useState<'course' | 'pricing' | 'registrations' | 'testimonials'>('course');
+  const [selectedSchema, setSelectedSchema] = useState<'course' | 'pricing' | 'registrations' | 'testimonials' | 'post'>('course');
   const [selectedDocId, setSelectedDocId] = useState<string>('');
   
   // Editor State
@@ -42,6 +43,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
   const [editPricing, setEditPricing] = useState<Partial<PricingPlan> | null>(null);
   const [editInquiry, setEditInquiry] = useState<Partial<Inquiry> | null>(null);
   const [editTestimonial, setEditTestimonial] = useState<Partial<Testimonial> | null>(null);
+  const [editPost, setEditPost] = useState<Partial<BlogPost> | null>(null);
 
   // Vision Tool State
   const [groqQuery, setGroqQuery] = useState<string>('*[_type == "course"]');
@@ -56,6 +58,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
     setPricingPlans(getPricingPlans());
     setInquiries(getInquiries());
     setTestimonials(getTestimonials());
+    setBlogPosts(getBlogPosts());
   }, []);
 
   // Sync editor when document selection changes
@@ -73,6 +76,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
       setEditPricing(null);
       setEditInquiry(null);
       setEditTestimonial(null);
+      setEditPost(null);
     } else if (selectedSchema === 'pricing') {
       const doc = pricingPlans.find(p => p.id === selectedDocId);
       if (doc) {
@@ -86,6 +90,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
       setEditCourse(null);
       setEditInquiry(null);
       setEditTestimonial(null);
+      setEditPost(null);
     } else if (selectedSchema === 'registrations') {
       const doc = inquiries.find(i => i.id === selectedDocId);
       if (doc) {
@@ -99,6 +104,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
       setEditCourse(null);
       setEditPricing(null);
       setEditTestimonial(null);
+      setEditPost(null);
     } else if (selectedSchema === 'testimonials') {
       const doc = testimonials.find(t => t.id === selectedDocId);
       if (doc) {
@@ -112,8 +118,23 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
       setEditCourse(null);
       setEditPricing(null);
       setEditInquiry(null);
+      setEditPost(null);
+    } else if (selectedSchema === 'post') {
+      const doc = blogPosts.find(p => p.id === selectedDocId);
+      if (doc) {
+        setEditPost({ ...doc });
+      } else if (blogPosts.length > 0) {
+        setSelectedDocId(blogPosts[0].id);
+        setEditPost({ ...blogPosts[0] });
+      } else {
+        setEditPost(null);
+      }
+      setEditCourse(null);
+      setEditPricing(null);
+      setEditInquiry(null);
+      setEditTestimonial(null);
     }
-  }, [selectedSchema, selectedDocId, courses, pricingPlans, inquiries, testimonials]);
+  }, [selectedSchema, selectedDocId, courses, pricingPlans, inquiries, testimonials, blogPosts]);
 
   // Toast helper
   const showToast = (msg: string) => {
@@ -146,6 +167,14 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
     showToast(`Testimonial for "${editTestimonial.name}" successfully saved!`);
   };
 
+  const handleSavePost = () => {
+    if (!editPost || !editPost.id) return;
+    const updated = blogPosts.map(p => p.id === editPost.id ? (editPost as BlogPost) : p);
+    setBlogPosts(updated);
+    saveBlogPosts(updated);
+    showToast(`Blog Post "${editPost.title}" successfully published!`);
+  };
+
   const handleDeleteDoc = () => {
     if (selectedSchema === 'course') {
       const updated = courses.filter(c => c.id !== selectedDocId);
@@ -171,6 +200,12 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
       saveTestimonials(updated);
       setSelectedDocId(updated[0]?.id || '');
       showToast('Testimonial document deleted successfully');
+    } else if (selectedSchema === 'post') {
+      const updated = blogPosts.filter(p => p.id !== selectedDocId);
+      setBlogPosts(updated);
+      saveBlogPosts(updated);
+      setSelectedDocId(updated[0]?.id || '');
+      showToast('Blog Post document deleted successfully');
     }
   };
 
@@ -218,6 +253,23 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
       saveTestimonials(updated);
       setSelectedDocId(newDoc.id);
       showToast('Created new Testimonial draft document!');
+    } else if (selectedSchema === 'post') {
+      const newDoc: BlogPost = {
+        id: `post-${Date.now()}`,
+        title: 'New SEO Quran Article',
+        category: 'Tajweed / Quranic Studies',
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        author: 'Academy Management',
+        readTime: '5 min read',
+        excerpt: 'Write a brief, catchy excerpt summarizing the article here to attract search engine indexing.',
+        content: 'Write the complete content body of your article here. You can paste your English SEO articles directly here to publish them.',
+        likes: 0
+      };
+      const updated = [...blogPosts, newDoc];
+      setBlogPosts(updated);
+      saveBlogPosts(updated);
+      setSelectedDocId(newDoc.id);
+      showToast('Created new Blog Post draft document!');
     }
   };
 
@@ -236,13 +288,15 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
         resultData = inquiries;
       } else if (q.includes('*[_type == "testimonials"]') || q.includes('testimonials')) {
         resultData = testimonials;
+      } else if (q.includes('*[_type == "post"]') || q.includes('post') || q.includes('blog')) {
+        resultData = blogPosts;
       } else if (q.includes('config') || q.includes('project')) {
         resultData = SANITY_CONFIG;
       } else {
         resultData = {
           _warning: "Vision emulated query parsed successfully. No matching schema filters applied.",
-          available_types: ["course", "pricing", "registrations", "testimonials"],
-          all_documents_count: courses.length + pricingPlans.length + inquiries.length + testimonials.length
+          available_types: ["course", "pricing", "registrations", "testimonials", "post"],
+          all_documents_count: courses.length + pricingPlans.length + inquiries.length + testimonials.length + blogPosts.length
         };
       }
 
@@ -377,6 +431,18 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
                 </span>
                 <span className="text-[10px] bg-[#1e2026] px-1.5 py-0.5 rounded text-gray-400 border border-[#2d3039]">Live</span>
               </button>
+
+              <button
+                id="schema-post-btn"
+                onClick={() => { setSelectedSchema('post'); setSelectedDocId(''); }}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded text-xs font-medium transition ${selectedSchema === 'post' ? 'bg-[#222530] text-[#a5b4fc]' : 'text-[#9ca3af] hover:text-white hover:bg-[#18191e]'}`}
+              >
+                <span className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-orange-400" />
+                  <span>Blog Posts ({blogPosts.length})</span>
+                </span>
+                <span className="text-[10px] bg-[#1e2026] px-1.5 py-0.5 rounded text-gray-400 border border-[#2d3039]">Live</span>
+              </button>
             </nav>
 
             {/* Studio details */}
@@ -391,7 +457,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
           <aside className="w-72 bg-[#17181d] border-r border-[#2d3039] flex flex-col">
             <div className="p-3 border-b border-[#2d3039] flex items-center justify-between bg-[#121316]">
               <span className="text-[10px] font-bold text-gray-500 tracking-wider uppercase">
-                {selectedSchema === 'course' ? 'Course' : selectedSchema === 'pricing' ? 'Pricing Plan' : selectedSchema === 'registrations' ? 'Registration' : 'Testimonial'} Documents
+                {selectedSchema === 'course' ? 'Course' : selectedSchema === 'pricing' ? 'Pricing Plan' : selectedSchema === 'registrations' ? 'Registration' : selectedSchema === 'testimonials' ? 'Testimonial' : 'Blog Post'} Documents
               </span>
               {selectedSchema !== 'registrations' && (
                 <button
@@ -479,6 +545,26 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
                   </div>
                 </button>
               ))}
+
+              {selectedSchema === 'post' && blogPosts.length === 0 && (
+                <div className="p-4 text-center text-xs text-gray-500 mt-8">
+                  No blog posts found. Click the + icon above to create one!
+                </div>
+              )}
+
+              {selectedSchema === 'post' && blogPosts.map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => setSelectedDocId(p.id)}
+                  className={`w-full text-left p-2.5 rounded transition ${selectedDocId === p.id ? 'bg-[#212431] border-l-2 border-[#4f46e5]' : 'hover:bg-[#1e2026]'}`}
+                >
+                  <div className="font-semibold text-xs text-white truncate">{p.title}</div>
+                  <div className="text-[10px] text-gray-400 flex items-center justify-between mt-1">
+                    <span className="truncate text-orange-400 font-medium">{p.category}</span>
+                    <span className="bg-[#101114] px-1 rounded text-[9px] text-gray-500 font-mono">_id: {p.id.substring(0, 10)}</span>
+                  </div>
+                </button>
+              ))}
             </div>
           </aside>
 
@@ -496,7 +582,7 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
                     {selectedSchema !== 'registrations' && (
                       <button
                         id="save-doc-btn"
-                        onClick={selectedSchema === 'course' ? handleSaveCourse : selectedSchema === 'pricing' ? handleSavePricing : selectedSchema === 'testimonials' ? handleSaveTestimonial : () => {}}
+                        onClick={selectedSchema === 'course' ? handleSaveCourse : selectedSchema === 'pricing' ? handleSavePricing : selectedSchema === 'testimonials' ? handleSaveTestimonial : selectedSchema === 'post' ? handleSavePost : () => {}}
                         className="flex items-center gap-1 bg-[#22c55e] hover:bg-[#16a34a] text-white text-xs px-3 py-1.5 rounded transition font-medium"
                       >
                         <Save className="w-3.5 h-3.5" /> Publish to Dataset
@@ -805,6 +891,105 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
                       </div>
                     </div>
                   )}
+
+                  {selectedSchema === 'post' && editPost && (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-[#121316] rounded border border-orange-950 flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-orange-400" />
+                        <div>
+                          <div className="text-xs font-semibold text-white">Interactive SEO Blog Post Document</div>
+                          <div className="text-[10px] text-gray-400">Published articles appear immediately in the "Blog Insights" section of the main portal. Use target SEO keywords in title, headers, and excerpt.</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1">Document ID (ReadOnly)</label>
+                        <input 
+                          type="text" 
+                          value={editPost.id || ''} 
+                          disabled 
+                          className="w-full bg-[#121316] text-[#71717a] text-xs px-3 py-2 rounded border border-[#2d3039] font-mono cursor-not-allowed"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Post Title (SEO Target Keywords Recommended)</label>
+                        <input 
+                          type="text" 
+                          value={editPost.title || ''} 
+                          onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
+                          className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5]"
+                          placeholder="e.g., Best online Quran academy in UK and Europe"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-300 mb-1">Category / Tag</label>
+                          <input 
+                            type="text" 
+                            value={editPost.category || ''} 
+                            onChange={(e) => setEditPost({ ...editPost, category: e.target.value })}
+                            className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5]"
+                            placeholder="e.g., Learn Tajweed"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-300 mb-1">Reading Time (Estimate)</label>
+                          <input 
+                            type="text" 
+                            value={editPost.readTime || ''} 
+                            onChange={(e) => setEditPost({ ...editPost, readTime: e.target.value })}
+                            className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5]"
+                            placeholder="e.g., 4 min read"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-300 mb-1">Author Name</label>
+                          <input 
+                            type="text" 
+                            value={editPost.author || ''} 
+                            onChange={(e) => setEditPost({ ...editPost, author: e.target.value })}
+                            className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-300 mb-1">Publish Date</label>
+                          <input 
+                            type="text" 
+                            value={editPost.date || ''} 
+                            onChange={(e) => setEditPost({ ...editPost, date: e.target.value })}
+                            className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5]"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Excerpt / Search Snippet (A brief summary shown on index cards)</label>
+                        <textarea 
+                          rows={3}
+                          value={editPost.excerpt || ''} 
+                          onChange={(e) => setEditPost({ ...editPost, excerpt: e.target.value })}
+                          className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5] leading-relaxed"
+                          placeholder="Summarize key points with keywords..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-300 mb-1">Main Article Body Content (Markdown Supported)</label>
+                        <textarea 
+                          rows={12}
+                          value={editPost.content || ''} 
+                          onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
+                          className="w-full bg-[#121316] text-white text-xs px-3 py-2 rounded border border-[#2d3039] focus:outline-none focus:border-[#4f46e5] font-mono leading-relaxed"
+                          placeholder="Paste your English SEO articles directly here to publish them."
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -851,6 +1036,13 @@ export default function SanityStudio({ onBackToWebsite }: SanityStudioProps) {
                   className="px-2 py-0.5 rounded bg-[#2b2e38] text-[10px] text-gray-300 hover:text-white transition"
                 >
                   Testimonials
+                </button>
+                <button
+                  id="preset-post-btn"
+                  onClick={() => getQueryPreset('post')}
+                  className="px-2 py-0.5 rounded bg-[#2b2e38] text-[10px] text-gray-300 hover:text-white transition"
+                >
+                  Blog Posts
                 </button>
               </div>
             </div>

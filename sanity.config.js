@@ -82,6 +82,21 @@ export default defineConfig({
           { name: 'quote', title: 'Quote text', type: 'text' },
           { name: 'rating', title: 'Star Rating (1-5)', type: 'number' }
         ]
+      },
+      {
+        name: 'post',
+        title: 'Blog Posts',
+        type: 'document',
+        fields: [
+          { name: 'title', title: 'Post Title', type: 'string' },
+          { name: 'category', title: 'Category', type: 'string' },
+          { name: 'date', title: 'Publish Date', type: 'string' },
+          { name: 'author', title: 'Author Name', type: 'string' },
+          { name: 'readTime', title: 'Read Time', type: 'string' },
+          { name: 'excerpt', title: 'Excerpt', type: 'text' },
+          { name: 'content', title: 'Content Body', type: 'text' },
+          { name: 'likes', title: 'Likes Count', type: 'number' }
+        ]
       }
     ],
   },

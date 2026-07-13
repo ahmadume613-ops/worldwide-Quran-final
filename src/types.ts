@@ -41,3 +41,16 @@ export interface Testimonial {
   quote: string;
 }
 
+export interface BlogPost {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  author: string;
+  readTime: string;
+  excerpt: string;
+  content: string;
+  likes: number;
+}
+
+
