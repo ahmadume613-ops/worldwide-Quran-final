@@ -36,7 +36,7 @@ export default function ClassFormats() {
               </h3>
 
               <p className="text-warm-text/85 text-sm sm:text-base leading-relaxed font-light">
-                The most effective online Quran study structure. Every student is paired with their own dedicated male or female teacher. The entire 30-minute session is tailored strictly to the student's individual reading speed, capability, and retention.
+                The most effective structure to <strong className="font-semibold text-emerald-deep">Learn Quran with Tajweed online</strong>. Every student is paired with their own dedicated teacher. Our staff includes options such as an <strong className="font-semibold text-emerald-deep">online female Quran teacher from Pakistan</strong> (ideal as a <strong className="font-semibold text-emerald-deep">lady Quran tutor online for sisters</strong>) and expert male instructors, making sure all students feel completely comfortable.
               </p>
 
               <ul className="space-y-3.5 text-sm font-medium text-warm-text/90">
@@ -87,7 +87,7 @@ export default function ClassFormats() {
               </h3>
 
               <p className="text-warm-text/85 text-sm sm:text-base leading-relaxed font-light">
-                Join high-spirited, interactive small group environments. Crafted strictly under professional management guidelines, our group lessons combine collective reciting practice with structured feedback. Recommended for secondary learning or daily practices.
+                Join high-spirited, interactive small group environments. We conduct popular <strong className="font-semibold text-gold-accent">online Quran classes for children in Australia</strong> and the West. It is also an ideal <strong className="font-semibold text-gold-accent">online Quran academy for expats in Dubai, Saudi Arabia, and Middle East</strong> looking for structured group recitation and practice with the <strong className="font-semibold text-gold-accent">best online Quran tutor in Sydney</strong> or regional peers.
               </p>
 
               <ul className="space-y-3.5 text-sm font-medium text-warm-text/90">

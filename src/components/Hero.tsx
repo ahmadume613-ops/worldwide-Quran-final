@@ -23,14 +23,14 @@ export default function Hero() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#2D312A] tracking-tight leading-none serif-font">
-              Learn the Holy Quran Online <br />
-              <span className="text-gold-accent block mt-2">
-                For Kids & Adults
+              Best Online Quran Academy <br />
+              <span className="text-gold-accent block mt-2 text-3xl sm:text-4xl lg:text-5xl">
+                In UK, Europe, USA & Canada
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-warm-text/80 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-light">
-              Welcome to the premier interactive modern online learning academy. Led by our dedicated Academy Manager and certified management team with over <strong className="text-emerald-deep font-bold">15 years of professional teaching experience</strong>. We make Quranic study comfortable, accessible, and correct from the ease of your home.
+              Welcome to the <strong className="text-[#2D312A] font-semibold">Best online Quran academy in UK and Europe</strong>. Whether you need an <strong className="text-emerald-deep font-semibold">online Quran tutor for kids in USA & Canada</strong>, a professional <strong className="text-emerald-deep font-semibold">online Quran teacher for kids in Germany</strong>, or want to <strong className="text-emerald-deep font-semibold">learn Quran online in France, Spain, and Italy</strong>, our certified teachers provide customized 1-on-1 sessions. Under the guidance of our expert Academy Manager (with 15+ years of experience), we make Tajweed and Quran studies accessible and correct.
             </p>
 
             {/* Micro Highlights */}
@@ -90,7 +90,7 @@ export default function Hero() {
               
               <img 
                 src={heroImg} 
-                alt="Parents and children studying Quran together online in a warm home" 
+                alt="Online Quran classes for children in Australia and expats in Dubai, Saudi Arabia, and Middle East - Learn Quran with Tajweed online from the best online Quran tutor in Sydney" 
                 className="w-full h-auto rounded object-cover aspect-[4/3] shadow-inner"
                 referrerPolicy="no-referrer"
                 onError={(e) => {

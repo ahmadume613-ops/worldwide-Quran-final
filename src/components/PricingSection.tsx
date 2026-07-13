@@ -170,10 +170,10 @@ export default function PricingSection({ onSelectPlan }: PricingSectionProps) {
         <div className="text-center max-w-3xl mx-auto mb-10">
           <span className="text-sm font-bold text-[#A4864A] tracking-widest uppercase block mb-3 font-sans">Affordable Investment</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2D312A] tracking-tight serif-font">
-            Transparent, Low-Cost Tuition Rates
+            Fee Structure - Learn Quran with Tajweed Online
           </h2>
           <p className="text-warm-text/80 mt-3 text-sm sm:text-base leading-relaxed font-light">
-            Choose the monthly curriculum plan that fits your family's educational needs. Custom plans with male or female tutors available for international students globally.
+            Worldwide Quran Academy is recognized as the <strong className="font-semibold text-[#2D312A]">best online Quran academy in UK and Europe</strong>, USA, Canada, and Australia. Choose the monthly curriculum plan that fits your family's educational needs. Custom plans with an <strong className="font-semibold text-[#2D312A]">online Quran teacher for kids in Germany</strong> or a dedicated <strong className="font-semibold text-[#2D312A]">lady Quran tutor online for sisters</strong> are available globally.
           </p>
           <div className="h-1 w-20 bg-gold-accent mx-auto rounded-full mt-5" />
         </div>

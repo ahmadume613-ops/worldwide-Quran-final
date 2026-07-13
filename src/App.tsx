@@ -97,7 +97,7 @@ export default function App() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/923345750157"
+        href="https://wa.me/923345750157?text=Assalam-o-Alaikum%2C%20I%20want%20to%20enroll%20my%20child%20in%20Worldwide%20Quran%20Academy.%20Please%20guide%20me%20about%20the%20free%20trial%20classes."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#20BA5A] text-white p-4 rounded-full shadow-2xl z-50 transition-all transform hover:scale-110 flex items-center justify-center border border-white/15"

@@ -13,41 +13,41 @@ export const SANITY_CONFIG = {
 export const INITIAL_COURSES: Course[] = [
   {
     id: 'course-1',
-    title: 'Madani Qaidah',
+    title: 'Learn Madani Qaida Online',
     urduTitle: 'مدنی قاعده',
-    description: 'The essential foundation booklet for beginners, teaching correct pronunciation (Makharij) and phonics of the Arabic letters with colorful rules.',
+    description: 'Learn Madani Qaida online with Tajweed. The essential foundation booklet for beginners, teaching correct pronunciation (Makharij) and basic Arabic alphabet learning with colorful rules.',
     icon: 'BookOpen',
-    badge: 'Beginner'
+    badge: 'With Tajweed'
   },
   {
     id: 'course-2',
-    title: 'Norani Qaidah',
+    title: 'Online Noorani Qaida Course',
     urduTitle: 'نورانی قاعده',
-    description: 'Classical pronunciation guide focusing on joint letters, harakat (vowels), and initial reading rules to build complete fluency in Quranic words.',
+    description: 'Our specialized Online Noorani Qaida course for kids focuses on classical pronunciation, joint letters, harakat (vowels), and initial reading rules to build complete fluency in Quranic words.',
     icon: 'BookOpenCheck',
-    badge: 'Popular'
+    badge: 'For Kids'
   },
   {
     id: 'course-3',
-    title: 'Iqra Book',
+    title: 'Online Iqra Book Reading',
     urduTitle: 'اقرا بک',
-    description: 'An interactive modern reading syllabus widely used globally to accelerate Arabic syllable recognition and phonetic word formation.',
+    description: 'Online Iqra book reading classes. An interactive modern reading syllabus widely used globally to accelerate Arabic syllable recognition and phonetic word formation.',
     icon: 'BookCheck',
-    badge: 'Kids favorite'
+    badge: 'Classes'
   },
   {
     id: 'course-4',
-    title: 'Tajweed Quran',
+    title: 'Learn Quran with Tajweed Online',
     urduTitle: 'تجوید القرآن',
-    description: 'Learn the rules of pronunciation, elongation (Madd), stop signs, and nasalization (Ghunnah) to recite the Holy Quran exactly like the Prophet (PBUH).',
+    description: 'Learn Quran with Tajweed online. Master the rules of pronunciation, elongation (Madd), stop signs, and nasalization (Ghunnah) to recite the Holy Quran exactly like the Prophet (PBUH).',
     icon: 'GraduationCap',
     badge: 'Highly Recommended'
   },
   {
     id: 'course-5',
-    title: 'Quran Memorization / Hifz',
+    title: 'Online Quran Memorization (Hifz)',
     urduTitle: 'حفظ القرآن',
-    description: 'A structured, personalized track designed for both short Surahs and full Quran memorization, complete with active revision and retention strategies.',
+    description: 'Online Quran memorization course (Hifz). A structured, personalized track designed for both short Surahs and full Quran memorization, complete with active revision and retention strategies.',
     icon: 'Award',
     badge: 'Premium Track'
   },
@@ -55,7 +55,7 @@ export const INITIAL_COURSES: Course[] = [
     id: 'course-6',
     title: 'Islamic Duas',
     urduTitle: 'اسلامک دعائیں',
-    description: 'Learn essential daily supplications (Masnoon Duas), manners, Islamic ethics (Akhlaq), and short surahs for daily spiritual development.',
+    description: 'Learn essential daily supplications (Masnoon Duas), manners, Islamic ethics (Akhlaq), and short surahs for daily spiritual development under the guidance of certified tutors.',
     icon: 'HeartHandshake',
     badge: 'Essentials'
   },
@@ -63,7 +63,7 @@ export const INITIAL_COURSES: Course[] = [
     id: 'course-7',
     title: 'Namaz Learning',
     urduTitle: 'نماز کورس',
-    description: 'A comprehensive visual and interactive course detailing correct prayers, Wudu (ablution) steps, Rakaat details, and prayer positions.',
+    description: 'A comprehensive visual and interactive course detailing correct prayers, Wudu (ablution) steps, Rakaat details, and prayer positions for all ages.',
     icon: 'Sparkles',
     badge: 'All Ages'
   }
@@ -211,11 +211,18 @@ export function getCourses(): Course[] {
   const cached = localStorage.getItem('worldwide_quran_courses');
   if (cached) {
     try {
-      return JSON.parse(cached);
+      const parsed = JSON.parse(cached);
+      // If the cached version doesn't have our SEO optimized title or course names, reset
+      const isSEOOptimized = parsed.some((c: any) => c.title.toLowerCase().includes('noorani qaida') || c.title.toLowerCase().includes('madani qaida'));
+      if (isSEOOptimized) {
+        return parsed;
+      }
     } catch (e) {
       console.error(e);
     }
   }
+  // Initialize/reset with initial courses to apply the comprehensive SEO optimization
+  localStorage.setItem('worldwide_quran_courses', JSON.stringify(INITIAL_COURSES));
   return INITIAL_COURSES;
 }
 

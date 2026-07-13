@@ -13,7 +13,7 @@ interface NavbarProps {
 export default function Navbar({ onGoToStudio, currentView }: NavbarProps) {
   const contactEmail = "worldwidequrann@gmail.com";
   const contactPhone = "+923345750157";
-  const whatsappUrl = "https://wa.me/923345750157";
+  const whatsappUrl = "https://wa.me/923345750157?text=Assalam-o-Alaikum%2C%20I%20want%20to%20enroll%20my%20child%20in%20Worldwide%20Quran%20Academy.%20Please%20guide%20me%20about%20the%20free%20trial%20classes.";
 
   return (
     <div id="navigation-wrapper" className="w-full bg-[#FDFBF7] border-b border-[#E5E1DA] sticky top-0 z-40">

@@ -14,7 +14,7 @@ export default function Footer({ onGoToStudio }: FooterProps) {
 
   const contactEmail = "worldwidequrann@gmail.com";
   const contactPhone = "+923345750157";
-  const whatsappUrl = "https://wa.me/923345750157";
+  const whatsappUrl = "https://wa.me/923345750157?text=Assalam-o-Alaikum%2C%20I%20want%20to%20enroll%20my%20child%20in%20Worldwide%20Quran%20Academy.%20Please%20guide%20me%20about%20the%20free%20trial%20classes.";
 
   return (
     <footer id="footer-wrapper" className="bg-emerald-deep text-[#FDFBF7] border-t border-gold-accent/10">
