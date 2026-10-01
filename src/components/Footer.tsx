@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Heart, Database, CheckCircle, ShieldCheck } from 'lucide-react';
-import logoImg from '../assets/images/quran_academy_logo_1782168948648.jpg';
+import logoImg from '../assets/images/quran_profile_pic_1790889558012.jpg';
 
 // Elegant circular SVG emblem with emerald-deep background and gold border/lettering as a premium fallback
 const FALLBACK_LOGO = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230D3E26' stroke='%23C5A880' stroke-width='4'/><text x='50%' y='58%' font-family='serif, system-ui' font-size='42' font-weight='bold' fill='%23C5A880' text-anchor='middle'>Q</text></svg>";
@@ -24,16 +24,18 @@ export default function Footer({ onGoToStudio }: FooterProps) {
         
         {/* Col 1: Brand & Logo */}
         <div className="md:col-span-4 space-y-6">
-          <div className="flex items-center gap-3">
-            <img 
-              src={logoImg} 
-              alt="Worldwide Quran Logo" 
-              className="h-14 w-14 rounded-full object-cover border-2 border-gold-accent shadow-sm"
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                e.currentTarget.src = FALLBACK_LOGO;
-              }}
-            />
+          <div className="flex items-center gap-3.5 group">
+            <div className="relative">
+              <img 
+                src={logoImg} 
+                alt="Worldwide Quran Academy Profile Emblem" 
+                className="h-14 w-14 rounded-full object-cover border-2 border-gold-accent shadow-md shrink-0 ring-2 ring-gold-accent/40 group-hover:scale-105 transition-transform duration-300"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_LOGO;
+                }}
+              />
+            </div>
             <div>
               <span className="text-xl font-bold text-[#FDFBF7] block serif-font">WORLDWIDE QURAN</span>
               <span className="text-[10px] text-gold-accent tracking-widest uppercase font-semibold block mt-0.5">Academy & Learning Center</span>

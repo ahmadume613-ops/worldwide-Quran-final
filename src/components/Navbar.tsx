@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Phone, ShieldCheck, Database, Award } from 'lucide-react';
-import logoImg from '../assets/images/quran_academy_logo_1782168948648.jpg';
+import logoImg from '../assets/images/quran_profile_pic_1790889558012.jpg';
 
 // Elegant circular SVG emblem with emerald-deep background and gold border/lettering as a premium fallback
 const FALLBACK_LOGO = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230D3E26' stroke='%23C5A880' stroke-width='4'/><text x='50%' y='58%' font-family='serif, system-ui' font-size='42' font-weight='bold' fill='%23C5A880' text-anchor='middle'>Q</text></svg>";
@@ -40,18 +40,21 @@ export default function Navbar({ onGoToStudio, currentView }: NavbarProps) {
       {/* Main Navigation Header */}
       <nav id="main-nav" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col lg:flex-row items-center justify-between gap-4">
         {/* Logo and Name */}
-        <div className="flex items-center gap-3">
-          <img 
-            src={logoImg} 
-            alt="Worldwide Quran Logo" 
-            className="h-12 w-12 rounded-full object-cover border-2 border-gold-accent shadow-md shrink-0"
-            referrerPolicy="no-referrer"
-            onError={(e) => {
-              e.currentTarget.src = FALLBACK_LOGO;
-            }}
-          />
+        <div className="flex items-center gap-3.5 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <div className="relative">
+            <img 
+              src={logoImg} 
+              alt="Worldwide Quran Academy Profile Emblem" 
+              className="h-13 w-13 sm:h-14 sm:w-14 rounded-full object-cover border-2 border-gold-accent shadow-md shrink-0 ring-2 ring-gold-accent/40 group-hover:ring-gold-accent group-hover:scale-105 transition-all duration-300"
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.currentTarget.src = FALLBACK_LOGO;
+              }}
+            />
+            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white ring-1 ring-gold-accent/50" title="Online & Available 24/7"></span>
+          </div>
           <div className="text-left">
-            <span className="text-lg sm:text-xl font-extrabold text-emerald-deep tracking-tight block serif-font leading-none">WORLDWIDE QURAN</span>
+            <span className="text-lg sm:text-xl font-extrabold text-emerald-deep tracking-tight block serif-font leading-none group-hover:text-emerald-800 transition">WORLDWIDE QURAN</span>
             <span className="text-[9px] text-gold-accent tracking-widest uppercase font-bold block mt-1">International Academy & Learning Center</span>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Award } from 'lucide-react';
 import heroImg from '../assets/images/quran_academy_hero_1782168948648.jpg';
+import profilePic from '../assets/images/quran_profile_pic_1790889558012.jpg';
 
 // High-quality public stock image representing happy, warm interactive online learning with laptop as a robust fallback
 const FALLBACK_HERO = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80";
@@ -98,12 +99,22 @@ export default function Hero() {
                 }}
               />
 
-              {/* Float Badge 1: Expert Manager */}
-              <div className="absolute -bottom-5 -left-5 bg-[#FDFBF7] border border-[#E5E1DA] p-4 rounded shadow-xl flex items-center gap-3 max-w-xs">
-                <div className="w-10 h-10 rounded-full bg-gold-accent flex items-center justify-center text-[#FDFBF7] shrink-0 font-bold">15+</div>
+              {/* Float Badge 1: Expert Manager & Verified Academy */}
+              <div className="absolute -bottom-5 -left-5 bg-[#FDFBF7] border border-[#E5E1DA] p-3.5 rounded-xl shadow-xl flex items-center gap-3.5 max-w-xs ring-1 ring-gold-accent/20">
+                <div className="relative shrink-0">
+                  <img 
+                    src={profilePic} 
+                    alt="Worldwide Quran Academy Profile" 
+                    className="w-12 h-12 rounded-full object-cover border-2 border-gold-accent shadow-md"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute -bottom-1 -right-1 bg-gold-accent text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full border border-white shadow-sm leading-none">
+                    15+
+                  </div>
+                </div>
                 <div>
-                  <span className="text-xs font-bold text-emerald-deep block">Experienced Management</span>
-                  <span className="text-[10px] text-warm-text/80 block leading-tight">15 years professional Quran teaching guidance</span>
+                  <span className="text-xs font-bold text-emerald-deep block">Worldwide Quran Academy</span>
+                  <span className="text-[10px] text-warm-text/80 block leading-tight">15+ years certified Quranic excellence & supervision</span>
                 </div>
               </div>
 
